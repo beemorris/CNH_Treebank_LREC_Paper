@@ -1,0 +1,317 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage{lrec}
+%\usepackage{multibib}
+%\newcites{languageresource}{Language Resources}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{soul}
+% for eps graphics
+
+\usepackage{epstopdf}
+%\usepackage[latin1]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage[latin1]{inputenc}
+\usepackage{fontspec}
+
+\setmainfont{FreeSerif}
+
+\usepackage{hyperref}
+\usepackage{xstring}
+
+% additional packages that may not be allowed?
+\usepackage{tikz-dependency}
+\tikzset{/depgraph/.cd,/depgraph/.search also = {/tikz},
+    baseline=-0.6ex, inner sep=-0.1cm, edge horizontal padding=3pt, edge unit distance=1.8ex}
+\usepackage[small,bf]{caption}
+\usepackage{tipa}
+\usepackage{wrapfig}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{graphicx}
+%\usepackage{xunicode,xltxtra}
+
+\newcommand{\secref}[1]{\StrSubstitute{\getrefnumber{#1}}{.}{ }}
+
+\title{Building a Universal Dependencies Treebank for Hakha Chin\\ \vspace*{.5\baselineskip}} %\normalfont{ The Title \ul{Must Be} Capitalised as in:\\ \vspace*{.5\baselineskip} \textbf{The Rise and Fall of Ziggy Stardust and the Spiders from Mars}}}
+
+\name{Becca Morris, Francis Tyers}
+
+\address{Indiana University, Indiana University\\
+         %morrisbe, ftyers \\
+         %author1@xxx.yy, author2@zzz.edu, author3@hhh.com\\
+         \{morrisbe, ftyers\}@iu.edu\\}
+
+
+\abstract{
+This paper outlines the process of creating a Universal Dependencies treebank for Hakha Chin. \\ \newline \Keywords{Universal Dependencies, under-resourced languages, Hakha Chin, Laiholh, treebanks} }
+
+\begin{document}
+
+\maketitleabstract
+
+\section{Introduction}
+\label{sec:intro}
+
+Hakha Chin, also known as Laiholh, is a Kuki-Chin language spoken in Myanmar/Burma with more than 165,000 speakers (Simons and Fenning 2018 \cite{simon2018ethnologue}). According to the Burmese American Community Institute (BACI \cite{baci}) more than 23,000 Burmese refugees call Indiana home, with roughly 17,000 residing in Indianapolis. This large community of refugees has made it clear that there is a severe need for linguistic resources for Hakha Chin. Currently, there does not exist many textual resources for this language. % Not only could this community greatly benefit from linguistic resources, they could also greatly benefit from computational linguistic (CL) resources, i.e., machine translation (MT) and automatic speech recognition (ASR) systems/tools. These tools will be invaluable to the Hakha Chin community, not just in Indiana, but also in Burma/Myanmar. 
+
+Even though Hakha Chin has a Language Status of 3 (wider communication) (Simons and Fenning 2018 \cite{simon2018ethnologue}), it is considered to be an under-resourced language. Hakha Chin is a language featured in the Cr\'ubad\'an Project, which is a project designed with the purpose of creating text corpora for under-resourced languages (Scannell 2007 \cite{scannell2007crubadan})\footnote{Here is a link to the Cr\'ubad\'an Project page for Hakha Chin. It also specifies the source of the textual data. \url{http://crubadan.org/languages/cnh}}. 
+
+Given the lack of data and resources for Hakha Chin, this paper aims to lay the groundwork so that others may use this resource for tasks such as machine translation (MT), automatic speech recognition (ASR), etc.
+
+%Since there is a lack of resources, especially computational resources, for Hakha Chin there are certain groundwork tools that must be made so that MT and ASR systems can be created and implemented. I propose that this groundwork should start with the creation of a Universal Dependencies (UD) Treebank for Hakha Chin. This treebank will be created with the end-goal of machine translation and automatic speech recognition systems in mind. The motivation behind beginning with a UD treebank lies in the fact that in order to implement a machine translation system, namely a statistical machine translation (SMT) system, one needs large corpora as their dataset and that is not realistic for under-resourced languages (Brown et al. 1993 \cite{brown1993mathematics}). To overcome this obstacle, I intend to start the machine translation process with the creation of a rule-based machine translation system (RBMT) with the intent of eventually having a RBMT/SMT hybrid system. The creation of a Universal Dependencies Treebank for Hakha Chin is a crucial step in the process of creating a rule-based machine translation system because the treebank will aid greatly in the creation of the rules used in the system (Aranberri 2015 \cite{aranberri2015exploiting}). 
+
+The motivation behind this project is grounded in the simple fact that having access to information in your native language is not a privilege, but a right. 
+This paper begins by asking where one should start in order to create a UD treebank for Hakha Chin (Section \ref{sec:start}. The subsections in Section \ref{sec:start} elaborate on the definition of universal dependencies and briefly discusses the benefits of utilizing them. Section \ref{sec:methods} outlines the methods used in this paper and the data for the treebank generation. This section also discusses how the dependencies were generated. Subsections \ref{sec:schemes} and \ref{sec:actualdep} elaborate on the annotation schemes and strategies implemented in this paper and also provide examples of dependency relations annotated for Hakha Chin sentences, respectively. The paper comes to an end with Sections \ref{sec:future} Future Work and \ref{sect:conclusion} Conclusion.
+
+\section{Where to Start?}
+\label{sec:start}
+
+To my knowledge, there has been no work published to date that applies a syntactic formalism/theory or framework to Hakha Chin. With this in mind, I propose applying the Universal Dependencies framework to Hakha Chin. The following subsection, Section \ref{sec:whatUD}, will go into further details about Universal Dependencies.  
+
+\subsection{What are Universal Dependencies and why should we start there?}
+\label{sec:whatUD}
+
+Universal Dependencies is a framework that allows for consistent grammatical annotation cross-linguistically (Nivre et al. 2017 \cite{nivre2017universal}). One of the core principles of UD is that content words are related by dependency relations. Another is that function words attach to the content word they modify. If a sentence has punctuation, it is attached to the head of a phrase or clause, the head is usually the main verb of a clause. 
+
+% FMT: We don't need to compare with phrase-structure grammar here
+%Given the differences between phrase structure grammar and universal dependencies, the figures below illustrate a sentence represented using phrase structure grammar and universal dependencies\footnote{It should be noted that the UD representation is based on an older version of UD and later examples may not have the same syntactic relations.} For a list of glossing abbreviations and meanings please see Appendixes \ref{app:UD} and \ref{app:POS}. 
+
+%\begin{figure}[h!]
+%\centering
+%    \begin{subfigure}[t]{0.45\textwidth}
+%\includegraphics[width=\textwidth]{ConsExampleNivre.png}
+%\caption{\label{fig:cons}Constituency grammar}
+%\end{subfigure}
+%~
+%    \begin{subfigure}[t]{0.45\textwidth}
+%\includegraphics[width=\textwidth]{DGExampleNivre.png}
+%\caption{\label{fig:DG}Dependency grammar}
+%\end{subfigure}
+%\caption{Constituency structure (\ref{fig:cons}) and dependency structure (\ref{fig:DG}) of the same English sentence from the Penn Treebank \cite{Marcus:1994:PTA:1075812.1075835}. Images taken from Nivre 2005 \cite{nivre2005dependency}.} 
+%\end{figure}
+%
+
+%We can see from Figure \ref{fig:DG} that when comparing the constituency structure to the dependency structure that the dependency structure is less complicated in that there are less smaller structures, constituents, that need to be accounted for when parsing. The benefits of utilizing dependency structures will be elaborated in Section \ref{sec:benefits} below. 
+
+\subsection{Benefits to UD}
+\label{sec:benefits}
+
+There are many benefits to using Universal Dependencies, one of which has already been mentioned --- cross-lingual annotation --- but another attractive benefit is that dependencies are fast and easy to annotate correctly, whether by humans or computers. Dependencies are also a very popular way to do parsing. This paper does not discuss dependency parsing; however, this treebank is being created with dependency parsing in mind so that others can use this treebank for parsing tasks. 
+
+The following section will discuss the methodology thus far. It focuses on the annotation schemes that have been and that are being being implemented. 
+
+\section{Methodology}
+\label{sec:methods}
+The sentences have been annotated using the UD guidelines (Nivre et al. 2017 \cite{nivre2017universal}) and the majority of which were gathered from the corpus of sentences that is currently being collected for use with Common Voice. Some sentences used for the treebank were collected in a linguistic field methods class at Indiana University\footnote{This course was taken by the first author over the span of two semesters and was taught by Dr. Kelly Berkson and the data came from a native Hakha Chin speaker as a consultant.}. Common Voice is a service that allows its users to donate data in a language they speak so that ASR systems can be trained (Common Voice \cite{commonvoice}). These sentences have been approved by multiple native speakers of Hakha Chin and by others who are working on this language. 
+
+Since this paper is centered around utilizing Universal Dependencies I will be using UD \textsc{Annotatrix} (Tyers 2017 \cite{tyers2017annotation}) which is a tool that has been designed with UD in mind. UD \textsc{Annotatrix} can be used online and offline and utilizes the CoNLL-U format\footnote{\url{http://universaldependencies.org/format}} (Nivre et al. 2017 \cite{nivre2017universal}). 
+
+\subsection{Data}
+\label{sec:data}
+
+Previous literature tells us that Hakha Chin is generally a verb-final or SOV language (Peterson 2003 \cite{Peterson-2003}, VanBik 2002 \cite{vanbik2002three}, Dryer 2008 \cite{dryer2008word}) with some exceptions, which will be discussed throughout this paper. The literature on Hakha Chin also tells us that there are varying verb stems in the language(Patent 1997 \cite{patent1997lai}). This paper does not go into the varying verb stems, but they can be seen throughout the treebank. 
+
+\textcolor{red}{ASK KELLY ABOUT DICTIONARY}
+
+\textcolor{red}{TALK ABOUT PLURAL SYSTEM HERE}
+
+\textcolor{red}{There are currently 378 sentences annotated and roughly 1800 tokens}
+
+The sentences annotated in this paper are no longer than ten words. This is because sentences in Hakha Chin can be very long, and it was determined that starting with shorter sentences would result in more accurate annotations for longer sentences in the future. 
+
+\subsection{Generating Dependencies}
+\label{sec:HCDep}
+
+This section will provide examples of dependency relations that have been generated for Hakha Chin, and it will also discuss the annotation strategy. The annotation process required that decisions be made about how to handle certain aspects of the language with regards to Universal Dependencies.
+
+\subsection{Annotation Schemes and Strategies}
+\label{sec:schemes}
+
+The following subsections illustrate the decisions that were made regarding how to annotate various aspects of Hakha Chin and then provides illustrations of these decisions in the form of dependency trees. As previously mentioned, the annotations were all done by hand in the CONLL-U format and were checked using UD \textsc{Annotatrix}.
+
+\subsection{Decisions}
+\label{sec:dec}
+In this section, I will discuss some of the decisions that were made during the annotation process and I will elaborate on which such decisions were made. 
+
+One of the earliest decisions that needed to be made, and is still a work in progress, is how to annotate the verbal prefixes that occur in Hakha Chin. This verbal prefix is generally glossed as a particle (PART), but it is suggested this syntactic relation be used as a last resort in UD. So because of this, the verbal prefix is currently being annotated as an unspecified dependency. This is done knowing that this will be changed later on. This verbal prefix takes the same form as the pronouns in Hakha Chin, and agree in number, i.e., \emph{a} 'he/she/it' is the third person singular pronoun and \emph{an} 'they' is the third person plural pronoun, both of these are the verbal prefixes. It is important to note that part of this decision has been made in that the verbal prefix is only annotated as PART when there is an explicit subject present. In the case that there is not an explicit subject, the verbal prefix is annotated as a pronoun (PRON) and is considered to be the nominal subject of the sentence. This is illustrated in Figures \ref{fig:ditrans} and \ref{fig:intrans} below in Section \ref{sec:actualdep}.
+
+Another decision was how to annotate a sentence involving the phrase \textit{my name is}. An example of a sentence containing this phrase will be provided below in Figure \ref{fig:name}. 
+
+For the ease of annotating by hand, the character '\d{t}' was changed to 'tt'. This is backed by the fact that this is how that character is represented in the dictionaries used.
+
+Hakha Chin also makes use of adjectival verbs, so in the vein of UD annotations, I have annotated the adjectives with the POS tag of 'VERB' but their XPOS tag, or language specific tag, is annotated as 'ADJ'. This allows the adjective to be the head of the phrase or the root of the sentence since there is no main verb for such sentences.
+
+In Hakha Chin tense does not seem to be indicated on the main verb; however, there are auxiliaries which indicate tense. Therefore, tense is not present on the annotation of the verb, but is instead annotated only if there is an auxiliary indicating the tense of the sentence.
+
+Lastly, if the source Hakha Chin sentence did not contain punctuation then the annotation does not contain punctuation and neither does the English gloss. 
+
+\subsection{Hakha Chin UD Examples}
+\label{sec:actualdep}
+
+All dependencies in this paper were annotated by hand and the dependencies were generated using UD \textsc{Annotatrix}. The first example below, Figure \ref{fig:erg}, shows a transitive sentence in Hakha Chin. It also shows an important grammatical feature in Hakha Chin --- ergativity. Hakha Chin has an ergative subject marker to distinguish between subjects and objects in a sentences. The ergative marker always occurs after the nominal subject in the sentence which is often the first word in the sentences. This example also shows an annotated example of the verbal prefix. 
+
+\begin{figure}[h]
+%\begin{wrapfigure}{r}{0.35\textwidth}
+\centering
+ \begin{dependency} 
+   \begin{deptext}[column sep=0.2cm]
+     Uico \& nih \& chizawh \& a \& dawi\\
+     \textsc{noun} \& \textsc{part} \& \textsc{noun} \& \textsc{part} \& \textsc{verb}\\
+     \emph{Dog} \& \emph{ERG} \& \emph{cat} \& \emph{3SG} \& 		\emph{chase} \\
+     \end{deptext}
+      \deproot{5}{root}
+      \depedge{5}{1}{nsubj}
+      \depedge{1}{2}{case}
+      \depedge{5}{3}{obj}
+      \depedge{5}{4}{dep}
+ \end{dependency}
+\caption{\label{fig:erg}}This example, \emph{Uico nih chizawh a dawi} 'The dog chased the cat' illustrates the usage of the ergative marker in Hakha Chin.
+%\end{wrapfigure}
+\end{figure}
+
+The example below, Figure \ref{fig:ditrans}, illustrates an example of a ditransitive sentence in Hakha Chin. This example demonstrates that \emph{ka} 'I' can also occur before the verb, this is likely an instance of the third person singular object pronoun being null. This sentence also shows a different word ordering than was seen in Figure \ref{fig:erg}, i.e., in this sentence the word ordering is OSV, with an indirect object between the object and subject. This example also shows a reduplication with the name 'Bawi'. 
+
+\begin{figure}[h]
+\centering
+ \begin{dependency} 
+   \begin{deptext}[column sep=0.2cm]
+     BawiBawi \& cuak \& ka \& pek\\
+     \textsc{propn} \& \textsc{noun} \& \textsc{pron} \& \textsc{verb}\\
+     \emph{BawiBawi} \& \emph{book} \& \emph{I} \& \emph{give} \\
+     \end{deptext}
+      \deproot{4}{root}
+      \depedge{4}{3}{nsubj}
+      \depedge{4}{1}{obj}
+      \depedge{4}{2}{iobj}
+ \end{dependency}
+\caption{\label{fig:ditrans}}\emph{BawiBawi cuak ka pek} 'I gave Bawi a book'.
+\end{figure}
+
+The following example, Figure \ref{fig:intrans}, demonstrates an intransitive sentence. It should be noted, that again there is no verbal prefix present in this example. The fact that there does not seem to be past tense marker in Hakha Chin has been seen in Figure \ref{fig:erg}, but is also present here. 
+
+\begin{figure}[h]
+\centering
+ \begin{dependency} 
+   \begin{deptext}[column sep=0.4cm]
+     Ka \& tli\\
+     \textsc{pron} \& \textsc{verb}\\
+     \emph{I} \& \emph{run} \\
+     \end{deptext}
+      \deproot{2}{root}
+      \depedge{2}{1}{nsubj}
+ \end{dependency}
+\caption{\label{fig:intrans}}\emph{Ka tli} 'I ran' 
+\end{figure}
+
+Another phenomenon, that should be illustrated is the fact that Hakha Chin uses adjectival verbs. This can be seen in Figure \ref{fig:adjverb} below. This sentence also demonstrates how possessives work in Hakha Chin. Topic markers are also present in Hakha Chin, and an example of this is presented in the example below.
+
+\begin{figure}[h]
+\centering
+ \begin{dependency} 
+   \begin{deptext}[column sep=0.2cm]
+     Ka \& rang \& cu \& a \& pawl\\
+     \textsc{pron} \& \textsc{noun} \& \textsc{part} \& \textsc{part} \& \textsc{verb}\\
+     \emph{My} \& \emph{horse} \& \emph{TOP} \& \emph{3SG} \& \emph{grey}\\
+     \end{deptext}
+      \deproot{5}{root}
+      \depedge{5}{2}{nsubj}
+      \depedge{2}{1}{nmod:poss}
+      \depedge{2}{3}{discourse}
+      \depedge{5}{4}{dep}
+ \end{dependency}
+\caption{\label{fig:adjverb}}\emph{Ka rang cu a pawl} 'My horse is grey' 
+\end{figure}
+
+As previously mentioned, Hakha Chin is an SOV language; however, it is possible for words to come after the noun. One of the most frequent instances of this is the question particle \emph{maw}. An example of this is presented below in Figure \ref{fig:question}.
+
+\begin{figure}[h]
+\centering
+ \begin{dependency} 
+   \begin{deptext}[column sep=0.4cm]
+     Na \& dam \& maw \& ? \\
+     \textsc{pron} \& \textsc{verb} \& \textsc{part} \& \textsc{punct}\\
+     \emph{You} \& \emph{well} \& \emph{Q}\\
+     \end{deptext}
+      \deproot{2}{root}
+      \depedge{2}{1}{nsubj}
+      \depedge{2}{3}{discourse}
+      \depedge{2}{4}{punct}
+ \end{dependency}
+\caption{\label{fig:question}}\emph{Na dam maw?} 'How are you?'
+\end{figure}
+
+Question markers are not the only words that can follow the main verbs of sentences in Hakha Chin. Plural markers can also occur after verbs, and as previously mentioned the post-verbal plural markers refer to the number of the object in the sentence.
+
+%Originally it was unclear how this sentence should be annotated, but after investigating the French UD Treebanks\footnote{\url{http://universaldependencies.org/#language-}}, it became apparent that one way to annotate this sentence is to declare \emph{min} 'name' as a verb. The figures below will illustrate the dependency structure of the sentence \emph{Je m'appelle Angelina.} 'My name is Angelina.' in French\footnote{This sentence and its annotation was pulled from here: \url{https://github.com/UniversalDependencies/UD_French-Spoken/blob/master/fr_spoken-ud-dev.conllu}} and \emph{Keimah ka min cu ChinChin a si.} (the English of this sentence will be discussed below) in Hakha Chin. Figure \ref{fig:french} below illustrates the French sentence and Figure \ref{fig:name} provides the annotation for the Hakha Chin sentence. It should be noted that Figure \ref{fig:name} does not contain punctuation due to page size limitations. 
+
+\begin{figure}[h]
+%\begin{wrapfigure}{r}{0.35\textwidth}
+\centering
+ \begin{dependency} 
+   \begin{deptext}[column sep=0.4cm]
+     Je \& m' \& appelle \& Angelina\\
+     \textsc{pron} \& \textsc{pron} \& \textsc{verb} \& \textsc{propn}\\
+     \emph{I} \& \emph{me} \& \emph{call} \& \emph{Angelina} \\ 
+     \end{deptext}
+      \deproot{3}{root}
+      \depedge{3}{1}{nsubj}
+      \depedge{3}{2}{iobj}
+      \depedge{3}{4}{obj}
+ \end{dependency}
+\caption{\label{fig:french}}\emph{Je m'appelle Angelina} 'My name is Angelina' / 'I call me Angelina'
+%\end{wrapfigure}
+\end{figure}
+
+\begin{figure}[h]
+%\begin{wrapfigure}{r}{0.35\textwidth}
+\centering
+ \begin{dependency} 
+   \begin{deptext}[column sep=0.1cm]
+     Keimah \& ka \& min \& cu \& ChinChin\& a \& si \\
+     \textsc{pron} \& \textsc{pron} \& \textsc{verb} \& \textsc{top} \& \textsc{propn} \& \textsc{part} \& \textsc{aux}\\
+     \emph{I} \& \emph{me} \& \emph{call} \& \emph{TOP} \& \emph{ChinChin} \& \emph{3SG} \& \emph{is} \\ 
+     \end{deptext}
+      \deproot{3}{root}
+      \depedge{3}{1}{nsubj}
+      \depedge{3}{2}{iobj}
+      \depedge{3}{5}{obj}
+      \depedge{3}{4}{discourse}
+      \depedge{3}{7}{cop}
+      \depedge{7}{6}{dep}
+ \end{dependency}
+\caption{\label{fig:name}}\emph{Keimah ka min cu ChinChin a si} 'My name is ChinChin' / 'It is ChinChin that I call me.'
+%\end{wrapfigure}
+\end{figure}
+
+We can see from Figures \ref{fig:french} and \ref{fig:name} above that the grammatical structure of declaring your name is quite similar in French and Hakha Chin. As mentioned earlier, this annotation is only possible if we change the sense of the word \emph{min} 'name', which is glossed as a noun, to be a verb with the meaning 'call'. This analysis leads to the non-idiomatic English translation of \emph{Keimah ka min cu ChinChin a si} to be something akin to 'It is ChinChin that I call me.' Given that there is no reflexive marker on this sentence the interpretation of 'myself' instead of 'me' is not presented here. 
+
+While the examples presented in this section are not exhaustive, it is easy to see that the annotation of Hakha Chin sentences is not always straight forward, i.e., the annotation of the verbal prefix. 
+
+\subsection{Future Work}
+\label{sec:future}
+The main goal for future work is to have a sizable Universal Dependencies Treebank for Hakha Chin. Given that this paper has only dealt with sentences that contain no more than ten words was intentional. The reason being that these shorter sentences will provide annotated chunks to insert into lengthier sentences in order to reduce the amount of manual annotation later. 
+
+\subsection{Conclusion}
+\label{sect:conclusion}
+This paper provide a brief explanation of how a Universal Dependencies Treebank was created for Hakha Chin, and why this resource is necessary. As previously mentioned, the annotation of dependencies is not always straightforward. This is especially true when working with an under-resourced language. The motivations presented in this paper make it abundantly clear that there exists a need for resources for Hakha Chin. 
+
+The current treebank is still in progress and it can be viewed on Github\footnote{\url{https://github.com/beemorris/UD_Hakha_Chin-LDT}}.
+
+\section{Acknowledgements}
+I would like to thank Kelly Berkson for allowing me to take part in this project from its inception and for supporting my endeavors. I would also like to thank Francis Tyers for his invaluable assistance in this project. And most importantly, I would like to thank all of our Hakha Chin language consultants, but espeically Peng Thang. Without his dedication to the Mozilla Common Voice project my research would not be possible. Thank you, Peng. 
+
+\nocite{*}
+\section{Bibliographical References}
+\label{main:ref}
+
+\bibliographystyle{lrec}
+\bibliography{main.bib}
+
+
+
+%\section{Language Resource References}
+%\label{lr:ref}
+%\bibliographystylelanguageresource{lrec}
+%\bibliographylanguageresource{lrec2020W-xample}
+
+\end{document}
